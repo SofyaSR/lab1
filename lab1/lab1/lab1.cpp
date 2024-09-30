@@ -4,10 +4,10 @@
 using namespace std;
 
 template <typename T>
-void InputCorrectNumber(T& var, bool canEqualToZero = false)
+void InputCorrectNumber(T& var)
 {
 	cin >> var;
-	while (cin.fail() || cin.peek() != '\n' || (canEqualToZero ? var < 0 : var <= 0))
+	while (cin.fail() || cin.peek() != '\n') 
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
@@ -34,7 +34,7 @@ void AddPipe(Pipe& pipe) {
 	cout << "Enter the pipe diameter (in millimeters): ";
 	InputCorrectNumber(pipe.diameter);
 	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
-	InputCorrectNumber(pipe.isRepairing, true);
+	InputCorrectNumber(pipe.isRepairing);
 }
 
 class CompressorStation
@@ -53,19 +53,19 @@ void AddCompressorStation(CompressorStation& CS) {
 	cout << "Enter the number of workshops: ";
 	InputCorrectNumber(CS.workshopCount);
 	cout << "Enter the number of active workshops: ";
-	InputCorrectNumber(CS.activeWorkshopCount, true);
+	InputCorrectNumber(CS.activeWorkshopCount);
 	while (CS.workshopCount < CS.activeWorkshopCount)
 	{
 		cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
 			<< "Please enter correct data: ";
-		InputCorrectNumber(CS.activeWorkshopCount, true);
+		InputCorrectNumber(CS.activeWorkshopCount);
 	}
 	cout << "Enter efficiency from 0 to 100: ";
-	InputCorrectNumber(CS.efficiency, true);
+	InputCorrectNumber(CS.efficiency);
 	while (!(CS.efficiency >= 0 && CS.efficiency <= 100))
 	{
 		cout << "Error! Please enter correct data: ";
-		cin >> CS.efficiency;
+		InputCorrectNumber(CS.efficiency);
 	}
 }
 
@@ -88,6 +88,10 @@ void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
 	}
 }
 
+void EditPipe(Pipe& pipe) {
+	cout << "Edit: Is the pipe being repaired? (1 - Yes, 0 - No)";
+	InputCorrectNumber(pipe.isRepairing);
+}
 
 int main()
 {
@@ -106,7 +110,7 @@ int main()
 			<< "6. Save" << endl
 			<< "7. Load" << endl
 			<< "What do you want to do: ";
-		InputCorrectNumber(commandNumber, true);
+		InputCorrectNumber(commandNumber);
 		switch (commandNumber)
 		{
 		case 0:
@@ -129,7 +133,8 @@ int main()
 			ViewAllObject(pipe, CS);
 			break;
 		case 4:
-
+			cout << "[ Edit pipe ]" << endl;
+			EditPipe(pipe);
 			break;
 
 		case 6:
