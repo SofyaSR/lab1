@@ -44,8 +44,8 @@ public:
 	int workshopCount = 0;
 	int activeWorkshopCount = 0;
 	int efficiency = 0;
-	int addactive = 0;
-	int rezadd = activeWorkshopCount + addactive;
+	bool add;
+	int addValue = 0;
 };
 
 void AddCompressorStation(CompressorStation& CS) {
@@ -55,12 +55,12 @@ void AddCompressorStation(CompressorStation& CS) {
 	cout << "Enter the number of workshops: ";
 	InputCorrectNumber(CS.workshopCount);
 	cout << "Enter the number of active workshops: ";
-	InputCorrectNumber(CS.rezadd);
-	while (CS.workshopCount < CS.rezadd)
+	InputCorrectNumber(CS.activeWorkshopCount);
+	while (CS.workshopCount < CS.activeWorkshopCount)
 	{
 		cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
 			<< "Please enter correct data: ";
-		InputCorrectNumber(CS.rezadd);
+		InputCorrectNumber(CS.activeWorkshopCount);
 	}
 	cout << "Enter efficiency from 0 to 100: ";
 	InputCorrectNumber(CS.efficiency);
@@ -84,14 +84,13 @@ void EditCS(CompressorStation& CS) {
 	if (CS.workshopCount == 0)
 		cout << "Compressor station not found." << endl;
 	else {
-		cout << "How much Add? ";
-		InputCorrectNumber(CS.addactive);
-		while (CS.workshopCount < CS.rezadd)
-		{
-			cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
-				<< "Please enter correct data: ";
-			InputCorrectNumber(CS.rezadd);
-
+		cout << "Add? (1 - Yes, 0 - Vice versa)";
+		InputCorrectNumber(CS.add);
+		if (CS.add == 1) {
+			CS.activeWorkshopCount += 1;  // Если 1, добавляем 1
+		}
+		else if (CS.add == 0) {
+			CS.activeWorkshopCount -= 1;  // Если 0, вычитаем 1
 		}
 	}
 }
@@ -109,7 +108,7 @@ void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
 	else {
 		cout << "Name Compressor Station: " << CS.name << endl;
 		cout << "Workshop Compressor Station: " << CS.workshopCount << endl;
-		cout << "Active Workshop Compressor Station: " << CS.rezadd << endl;
+		cout << "Active Workshop Compressor Station: " << CS.activeWorkshopCount << endl;
 		cout << "Efficiency: " << CS.efficiency << endl;
 	}
 }
