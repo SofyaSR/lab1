@@ -7,7 +7,7 @@ template <typename T>
 void InputCorrectNumber(T& var)
 {
 	cin >> var;
-	while (cin.fail() || cin.peek() != '\n') 
+	while (cin.fail() || cin.peek() != '\n' || var < 0)
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
@@ -44,6 +44,8 @@ public:
 	int workshopCount = 0;
 	int activeWorkshopCount = 0;
 	int efficiency = 0;
+	int addactive = 0;
+	int rezadd = activeWorkshopCount + addactive;
 };
 
 void AddCompressorStation(CompressorStation& CS) {
@@ -53,12 +55,12 @@ void AddCompressorStation(CompressorStation& CS) {
 	cout << "Enter the number of workshops: ";
 	InputCorrectNumber(CS.workshopCount);
 	cout << "Enter the number of active workshops: ";
-	InputCorrectNumber(CS.activeWorkshopCount);
-	while (CS.workshopCount < CS.activeWorkshopCount)
+	InputCorrectNumber(CS.rezadd);
+	while (CS.workshopCount < CS.rezadd)
 	{
 		cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
 			<< "Please enter correct data: ";
-		InputCorrectNumber(CS.activeWorkshopCount);
+		InputCorrectNumber(CS.rezadd);
 	}
 	cout << "Enter efficiency from 0 to 100: ";
 	InputCorrectNumber(CS.efficiency);
@@ -69,6 +71,30 @@ void AddCompressorStation(CompressorStation& CS) {
 	}
 }
 
+void EditPipe(Pipe& pipe) {
+	if (pipe.diameter == 0)
+		cout << "Pipe not found." << endl;
+	else {
+		cout << "Edit: Is the pipe being repaired? (1 - Yes, 0 - No) ";
+		InputCorrectNumber(pipe.isRepairing);
+	}
+}
+
+void EditCS(CompressorStation& CS) {
+	if (CS.workshopCount == 0)
+		cout << "Compressor station not found." << endl;
+	else {
+		cout << "How much Add? ";
+		InputCorrectNumber(CS.addactive);
+		while (CS.workshopCount < CS.rezadd)
+		{
+			cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
+				<< "Please enter correct data: ";
+			InputCorrectNumber(CS.rezadd);
+
+		}
+	}
+}
 void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
 	if (pipe.diameter == 0)
 		cout << "Pipe not found." << endl;
@@ -76,21 +102,16 @@ void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
 		cout << "Kilometer mark: " << pipe.kilometerMark << endl;
 		cout << "Pipe length: " << pipe.length << endl;
 		cout << "Pipe diameter: " << pipe.diameter << endl;
-		cout << "Is repair?" << pipe.isRepairing << endl;
+		cout << "Is repair? (1 - Yes, 0 - No) " << pipe.isRepairing << endl;
 	}
 	if (CS.workshopCount == 0)
 		cout << "Compressor station not found." << endl;
 	else {
 		cout << "Name Compressor Station: " << CS.name << endl;
 		cout << "Workshop Compressor Station: " << CS.workshopCount << endl;
-		cout << "Active Workshop Compressor Station: " << CS.activeWorkshopCount << endl;
+		cout << "Active Workshop Compressor Station: " << CS.rezadd << endl;
 		cout << "Efficiency: " << CS.efficiency << endl;
 	}
-}
-
-void EditPipe(Pipe& pipe) {
-	cout << "Edit: Is the pipe being repaired? (1 - Yes, 0 - No)";
-	InputCorrectNumber(pipe.isRepairing);
 }
 
 int main()
@@ -106,7 +127,7 @@ int main()
 			<< "2. Add compressor station" << endl
 			<< "3. View all objects" << endl
 			<< "4. Edit pipe" << endl
-			<< "5. Edit compressor station" << endl
+			<< "5. Add active workshop" << endl
 			<< "6. Save" << endl
 			<< "7. Load" << endl
 			<< "What do you want to do: ";
@@ -129,18 +150,33 @@ int main()
 			break;
 		}
 		case 3:
+
 			cout << "[ View all objects ]" << endl;
 			ViewAllObject(pipe, CS);
 			break;
+
 		case 4:
+
 			cout << "[ Edit pipe ]" << endl;
 			EditPipe(pipe);
 			break;
 
-		case 6:
-			cout << "[ Save ]" << endl;
-			
+		case 5:
+
+			cout << "[ Add active Workshop ]" << endl;
+			EditCS(CS);
 			break;
+
+		case 6:
+
+			cout << "[ Save ]" << endl;
+			break;
+
+		case 7:
+
+			cout << "[ Load ]" << endl;
+			break;
+
 		default:
 			cout << "Error! Please enter correct data: " << endl;
 			break;
