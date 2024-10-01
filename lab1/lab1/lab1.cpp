@@ -47,6 +47,13 @@ void AddPipe(Pipe& pipe) {
 	{
 		cout << "Error! Please enter correct data: ";
 	}
+	//while (!(pipe.temp == 2 || pipe.temp == 1)) 
+	//{
+	//	cin.clear();
+	//	cin.ignore(1000, '\n');
+	//	cout << "Error! Please enter correct data: ";
+	//	pipe.isRepairing = pipe.temp;
+	//}
 	
 }
 
@@ -60,6 +67,7 @@ public:
 	int add;
 	int addValue = 0;
 	int temp;
+	int t;
 };
 
 void AddCompressorStation(CompressorStation& CS) {
@@ -69,12 +77,20 @@ void AddCompressorStation(CompressorStation& CS) {
 	cout << "Enter the number of workshops: ";
 	InputCorrectNumber(CS.workshopCount);
 	cout << "Enter the number of active workshops: ";
-	InputCorrectNumber(CS.activeWorkshopCount);
+	cin >> CS.t;
+	if (CS.t >= 0)
+	{
+		CS.activeWorkshopCount = CS.t;
+	}
+	else
+	{
+		cout << "Error! Please enter correct data: ";
+	}
 	while (CS.workshopCount < CS.activeWorkshopCount)
 	{
 		cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
 			<< "Please enter correct data: ";
-		//InputCorrectNumber(CS.activeWorkshopCount);
+		InputCorrectNumber(CS.activeWorkshopCount);
 	}
 	cout << "Enter efficiency from 0 to 100: ";
 	InputCorrectNumber(CS.efficiency);
@@ -110,27 +126,23 @@ void EditCS(CompressorStation& CS) {
 		}
 		if (CS.add == 1) {
 			CS.activeWorkshopCount += 1;
-			while (CS.workshopCount < CS.activeWorkshopCount)
+			if (CS.workshopCount < CS.activeWorkshopCount)
 			{
-				cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
-					<< "Please enter correct data: ";
-				InputCorrectNumber(CS.activeWorkshopCount);
+				cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl;
 			}
 		}
 		else if (CS.add == 2) {
 			CS.activeWorkshopCount -= 1;
-			while (CS.workshopCount < CS.activeWorkshopCount)
+			if (0 > CS.activeWorkshopCount)
 			{
-				cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
-					<< "Please enter correct data: ";
-				InputCorrectNumber(CS.activeWorkshopCount);
+				cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl;
 			}
 		}
 	}
 }
 void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
 	system("cls");
-	if (pipe.diameter == 0)
+	if (!(pipe.isRepairing == 1 || pipe.isRepairing == 2))
 		cout << "Pipe not found." << endl;
 	else {
 		cout << "Kilometer mark: " << pipe.kilometerMark << endl;
