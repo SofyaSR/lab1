@@ -1,0 +1,8 @@
+Name Compressor Station:
+ghhg
+Workshop Compressor Station: 
+4
+Active Workshop Compressor Station:
+-1
+Efficiency:
+100

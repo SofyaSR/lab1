@@ -1,13 +1,15 @@
 ﻿#include <iostream>
 #include <string>
 #include <fstream>
+#include <sstream>
+#include <vector>
 using namespace std;
 
 template <typename T>
 void InputCorrectNumber(T& var)
 {
 	cin >> var;
-	while (cin.fail() || cin.peek() != '\n' || var < 0)
+	while (cin.fail() || cin.peek() != '\n' || var < 1)
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
@@ -22,7 +24,8 @@ public:
 	string kilometerMark = "";
 	double length = 0;
 	int diameter = 0;
-	bool isRepairing;
+	int isRepairing;
+	int temp;
 };
 
 void AddPipe(Pipe& pipe) {
@@ -31,10 +34,20 @@ void AddPipe(Pipe& pipe) {
 	getline(cin, pipe.kilometerMark);
 	cout << "Enter the pipe length (in kilometers): ";
 	InputCorrectNumber(pipe.length);
+
 	cout << "Enter the pipe diameter (in millimeters): ";
 	InputCorrectNumber(pipe.diameter);
-	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
-	InputCorrectNumber(pipe.isRepairing);
+	cout << "Is the pipe being repaired? (1 - Yes, 2 - No) ";
+	cin >> pipe.temp;
+	if (pipe.temp == 1 || pipe.temp == 2)
+	{
+		pipe.isRepairing = pipe.temp;
+	}
+	else
+	{
+		cout << "Error! Please enter correct data: ";
+	}
+	
 }
 
 class CompressorStation
@@ -44,8 +57,9 @@ public:
 	int workshopCount = 0;
 	int activeWorkshopCount = 0;
 	int efficiency = 0;
-	bool add;
+	int add;
 	int addValue = 0;
+	int temp;
 };
 
 void AddCompressorStation(CompressorStation& CS) {
@@ -60,7 +74,7 @@ void AddCompressorStation(CompressorStation& CS) {
 	{
 		cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
 			<< "Please enter correct data: ";
-		InputCorrectNumber(CS.activeWorkshopCount);
+		//InputCorrectNumber(CS.activeWorkshopCount);
 	}
 	cout << "Enter efficiency from 0 to 100: ";
 	InputCorrectNumber(CS.efficiency);
@@ -75,7 +89,7 @@ void EditPipe(Pipe& pipe) {
 	if (pipe.diameter == 0)
 		cout << "Pipe not found." << endl;
 	else {
-		cout << "Edit: Is the pipe being repaired? (1 - Yes, 0 - No) ";
+		cout << "Edit: Is the pipe being repaired? (1 - Yes, 2 - No) ";
 		InputCorrectNumber(pipe.isRepairing);
 	}
 }
@@ -84,13 +98,33 @@ void EditCS(CompressorStation& CS) {
 	if (CS.workshopCount == 0)
 		cout << "Compressor station not found." << endl;
 	else {
-		cout << "Add? (1 - Yes, 0 - Vice versa) ";
-		InputCorrectNumber(CS.add);
+		cout << "Add? (1 - Yes, 2 - Vice versa) ";
+		cin >> CS.temp;
+		if (CS.temp == 1 || CS.temp == 2)
+		{
+			CS.add = CS.temp;
+		}
+		else
+		{
+			cout << "Error! Please enter correct data: ";
+		}
 		if (CS.add == 1) {
 			CS.activeWorkshopCount += 1;
+			while (CS.workshopCount < CS.activeWorkshopCount)
+			{
+				cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
+					<< "Please enter correct data: ";
+				InputCorrectNumber(CS.activeWorkshopCount);
+			}
 		}
-		else if (CS.add == 0) {
+		else if (CS.add == 2) {
 			CS.activeWorkshopCount -= 1;
+			while (CS.workshopCount < CS.activeWorkshopCount)
+			{
+				cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
+					<< "Please enter correct data: ";
+				InputCorrectNumber(CS.activeWorkshopCount);
+			}
 		}
 	}
 }
@@ -102,7 +136,7 @@ void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
 		cout << "Kilometer mark: " << pipe.kilometerMark << endl;
 		cout << "Pipe length: " << pipe.length << endl;
 		cout << "Pipe diameter: " << pipe.diameter << endl;
-		cout << "Is repair? (1 - Yes, 0 - No) " << pipe.isRepairing << endl;
+		cout << "Is repair? (1 - Yes, 2 - No) " << pipe.isRepairing << endl;
 	}
 	if (CS.workshopCount == 0)
 		cout << "Compressor station not found." << endl;
@@ -123,7 +157,7 @@ void Save(Pipe& pipe, CompressorStation& CS) {
 				cout << "Pipe not found." << endl;
 			else {
 				out << "Kilometer mark:" << endl;
-				out << pipe.kilometerMark << endl;
+				out << string(pipe.kilometerMark) << endl;
 				out << "Pipe lengh" << endl;
 				out << pipe.length << endl;
 				out << "Pipe diametr" << endl;
@@ -142,6 +176,11 @@ void Save(Pipe& pipe, CompressorStation& CS) {
 				out << CS.activeWorkshopCount << endl;
 				out << "Efficiency:" << endl;
 				out << CS.efficiency << endl;
+				getline(cin, CS.name);
+				InputCorrectNumber(CS.workshopCount);
+				InputCorrectNumber(CS.activeWorkshopCount);
+				InputCorrectNumber(CS.efficiency);
+
 			}
 		}
 		out.close();
@@ -149,6 +188,34 @@ void Save(Pipe& pipe, CompressorStation& CS) {
 	}
 
 }
+
+void Load(string filename, Pipe& pipe, CompressorStation& CS) {
+	ifstream infile;
+	infile.open(filename);
+	if (infile.is_open()) {
+		string name, nameC;
+		double lengthStr, diameterStr, repairStr, numShopsStr, workingShopsStr, efficiencyStr;
+		infile >> name;
+		infile >> lengthStr;
+		infile >> diameterStr;
+		infile >> repairStr;
+		pipe.kilometerMark = name;
+		pipe.length = lengthStr;
+		pipe.diameter = diameterStr;
+		pipe.isRepairing = repairStr;
+		infile >> nameC;
+		infile >> numShopsStr;
+		infile >> workingShopsStr;
+		infile >> efficiencyStr;
+		CS.name = nameC;
+		CS.workshopCount = numShopsStr;
+		CS.activeWorkshopCount = workingShopsStr;
+		CS.efficiency = efficiencyStr;
+	}
+	infile.close();
+	cout << "The data is downloaded from a file " << filename << endl;
+}
+
 
 int main()
 {
@@ -159,7 +226,7 @@ int main()
 	while (true)
 	{
 		cout << "MENU:" << endl
-			<< "0. Exit the program" << endl
+			<< "8. Exit the program" << endl
 			<< "1. Add pipe" << endl
 			<< "2. Add compressor station" << endl
 			<< "3. View all objects" << endl
@@ -213,6 +280,7 @@ int main()
 		case 7:
 
 			cout << "[ Load ]" << endl;
+			Load ("vtoroi.txt", pipe, CS);
 			break;
 
 		default:
