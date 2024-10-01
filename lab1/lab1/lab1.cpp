@@ -84,17 +84,18 @@ void EditCS(CompressorStation& CS) {
 	if (CS.workshopCount == 0)
 		cout << "Compressor station not found." << endl;
 	else {
-		cout << "Add? (1 - Yes, 0 - Vice versa)";
+		cout << "Add? (1 - Yes, 0 - Vice versa) ";
 		InputCorrectNumber(CS.add);
 		if (CS.add == 1) {
-			CS.activeWorkshopCount += 1;  // Если 1, добавляем 1
+			CS.activeWorkshopCount += 1;
 		}
 		else if (CS.add == 0) {
-			CS.activeWorkshopCount -= 1;  // Если 0, вычитаем 1
+			CS.activeWorkshopCount -= 1;
 		}
 	}
 }
 void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
+	system("cls");
 	if (pipe.diameter == 0)
 		cout << "Pipe not found." << endl;
 	else {
@@ -112,9 +113,46 @@ void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
 		cout << "Efficiency: " << CS.efficiency << endl;
 	}
 }
+void Save(Pipe& pipe, CompressorStation& CS) {
+
+	{
+		ofstream out;   
+		out.open("pervi.txt");      
+		if (out.is_open())
+		{	if (pipe.diameter == 0)
+				cout << "Pipe not found." << endl;
+			else {
+				out << "Kilometer mark:" << endl;
+				out << pipe.kilometerMark << endl;
+				out << "Pipe lengh" << endl;
+				out << pipe.length << endl;
+				out << "Pipe diametr" << endl;
+				out << pipe.diameter << endl;
+				out << "is repair?" << endl;
+				out << pipe.isRepairing << endl;
+			}
+			if (CS.activeWorkshopCount == 0)
+				cout << "CS not found." << endl;
+			else {
+				out << "Name Compressor Station:" << endl;
+				out << CS.name << endl;
+				out << "Workshop Compressor Station: " << endl;
+				out << CS.workshopCount << endl;
+				out << "Active Workshop Compressor Station:" << endl;
+				out << CS.activeWorkshopCount << endl;
+				out << "Efficiency:" << endl;
+				out << CS.efficiency << endl;
+			}
+		}
+		out.close();
+		cout << "File has been written" << std::endl;
+	}
+
+}
 
 int main()
 {
+
 	int commandNumber;
 	Pipe pipe;
 	CompressorStation CS;
@@ -169,6 +207,7 @@ int main()
 		case 6:
 
 			cout << "[ Save ]" << endl;
+			Save(pipe, CS);
 			break;
 
 		case 7:
