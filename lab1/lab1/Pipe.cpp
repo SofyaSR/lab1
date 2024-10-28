@@ -30,7 +30,7 @@ bool Pipe::GetStatus() const
 void InputCorrectDiameter(int& diameter)
 {
 	cin >> diameter;
-	while ((diameter != 500 && diameter != 700 && diameter != 1000 && diameter != 1400) || cin.fail() || cin.peek() != '\n')
+	while ((diameter < 500) || cin.fail() || cin.peek() != '\n')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
@@ -52,7 +52,7 @@ void EditPipes(vector <Pipe*>& pipes)
 	case 1:
 		bool isRepairing;
 		cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
-		InputCorrectNumber(isRepairing, true);
+		InputCorrectNumberNull(isRepairing, true);
 
 		for (auto& pipe : pipes)
 		{
@@ -82,7 +82,7 @@ void EditPipe(Pipe& pipe)
 	case 1:
 		bool isRepairing;
 		cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
-		InputCorrectNumber(isRepairing, true);
+		InputCorrectNumberNull(isRepairing, true);
 
 		pipe.isRepairing = isRepairing;
 		cout << "ID: " << pipe.Id << " - ";
@@ -121,7 +121,7 @@ istream& operator>>(istream& in, Pipe& pipe)
 	cout << "Enter the pipe diameter (in millimeters): ";
 	InputCorrectDiameter(pipe.diameter);
 	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
-	InputCorrectNumber(pipe.isRepairing, true);
+	InputCorrectNumberNull(pipe.isRepairing, true);
 	return in;
 }
 

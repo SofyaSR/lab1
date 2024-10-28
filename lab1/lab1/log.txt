@@ -1,8 +1,1 @@
 [0] Start
-[1] Add pipe start
-[2] Add pipe finish
-[3] Search start
-[4] Search finish
-[5] Search start
-[6] Search finish
-[7] Search start

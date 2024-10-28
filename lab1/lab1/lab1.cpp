@@ -236,7 +236,7 @@ int main()
 			<< "7. Load" << endl
 			<< "8. Search" << endl
 			<< "What do you want to do: ";
-		InputCorrectNumber(commandNumber);
+		InputCorrectNumberNull(commandNumber);
 		switch (commandNumber)
 		{
 		case 0:
