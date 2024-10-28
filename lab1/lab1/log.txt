@@ -1,0 +1,25 @@
+[0] Start
+[1] Add pipe start
+[2] Add pipe finish
+[3] Show all objects start
+[4] Show all objects finish
+[5] Add compressor station start
+[6] Add compressor station finish
+[7] Show all objects start
+[8] Show all objects finish
+[9] Edit pipe start
+[10] Edit pipe finish
+[11] Show all objects start
+[12] Show all objects finish
+[13] Edit compressor station start
+[14] Edit compressor station finish
+[15] Show all objects start
+[16] Show all objects finish
+[17] Save start
+[18] Save finish
+[19] Load start
+[20] Load finish
+[21] Search start
+[22] Search finish
+[23] Search start
+[24] Search finish

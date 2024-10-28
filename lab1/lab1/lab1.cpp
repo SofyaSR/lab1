@@ -1,244 +1,232 @@
 ﻿#include <iostream>
-#include <string>
 #include <fstream>
-#include <sstream>
-#include <vector>
+#include <unordered_map>
+#include <queue>
+#include "Utilities.h"
+#include "Pipe.h"
+#include "CompressorStation.h"
+#include "logger.h"
+
 using namespace std;
 
 template <typename T>
-void InputCorrectNumber(T& var)
+T& SelectElement(unordered_map <int, T>& elements)
 {
-	cin >> var;
-	while (cin.fail() || cin.peek() != '\n' || var < 1)
+	int Id;
+	cout << "Enter number: ";
+	InputCorrectNumber(Id);
+	while (elements.find(Id) == elements.end())
 	{
-		cin.clear();
-		cin.ignore(1000, '\n');
-		cout << "Error! Please enter correct data: ";
-		cin >> var;
-	}
-}
-
-class Pipe
-{
-public:
-	string kilometerMark = "";
-	double length = 0;
-	int diameter = 0;
-	int isRepairing;
-	int temp;
-};
-
-void AddPipe(Pipe& pipe) {
-	cout << "Enter kilometer mark: ";
-	cin.ignore();
-	getline(cin, pipe.kilometerMark);
-	cout << "Enter the pipe length (in kilometers): ";
-	InputCorrectNumber(pipe.length);
-
-	cout << "Enter the pipe diameter (in millimeters): ";
-	InputCorrectNumber(pipe.diameter);
-	cout << "Is the pipe being repaired? (1 - Yes, 2 - No) ";
-	cin >> pipe.temp;
-	if (pipe.temp == 1 || pipe.temp == 2)
-	{
-		pipe.isRepairing = pipe.temp;
-	}
-	else
-	{
-		cout << "Error! Please enter correct data: ";
-	}
-	//while (!(pipe.temp == 2 || pipe.temp == 1)) 
-	//{
-	//	cin.clear();
-	//	cin.ignore(1000, '\n');
-	//	cout << "Error! Please enter correct data: ";
-	//	pipe.isRepairing = pipe.temp;
-	//}
-	
-}
-
-class CompressorStation
-{
-public:
-	string name = "";
-	int workshopCount = 0;
-	int activeWorkshopCount = 0;
-	int efficiency = 0;
-	int add;
-	int addValue = 0;
-	int temp;
-	int t;
-};
-
-void AddCompressorStation(CompressorStation& CS) {
-	cout << "Enter the name of the Compressor station: ";
-	cin.ignore();
-	getline(cin, CS.name);
-	cout << "Enter the number of workshops: ";
-	InputCorrectNumber(CS.workshopCount);
-	cout << "Enter the number of active workshops: ";
-	cin >> CS.t;
-	if (CS.t >= 0)
-	{
-		CS.activeWorkshopCount = CS.t;
-	}
-	else
-	{
-		cout << "Error! Please enter correct data: ";
-	}
-	while (CS.workshopCount < CS.activeWorkshopCount)
-	{
-		cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl
+		cout << "Error!\nThe number exceeds the number of elements." << endl
+			<< "Number of elements: " << elements.size() << endl
 			<< "Please enter correct data: ";
-		InputCorrectNumber(CS.activeWorkshopCount);
+		InputCorrectNumber(Id);
 	}
-	cout << "Enter efficiency from 0 to 100: ";
-	InputCorrectNumber(CS.efficiency);
-	while (!(CS.efficiency >= 0 && CS.efficiency <= 100))
+	return elements[Id];
+}
+
+void SearchPipes(unordered_map <int, Pipe>& pipes) {
+	while (true)
 	{
-		cout << "Error! Please enter correct data: ";
-		InputCorrectNumber(CS.efficiency);
-	}
-}
-
-void EditPipe(Pipe& pipe) {
-	if (pipe.diameter == 0)
-		cout << "Pipe not found." << endl;
-	else {
-		cout << "Edit: Is the pipe being repaired? (1 - Yes, 2 - No) ";
-		InputCorrectNumber(pipe.isRepairing);
-	}
-}
-
-void EditCS(CompressorStation& CS) {
-	if (CS.workshopCount == 0)
-		cout << "Compressor station not found." << endl;
-	else {
-		cout << "Add? (1 - Yes, 2 - Vice versa) ";
-		cin >> CS.temp;
-		if (CS.temp == 1 || CS.temp == 2)
+		int commandNumber;
+		cout << "By what criteria do you want to find a pipe?" << endl
+			<< "1. Id" << endl
+			<< "2. Name" << endl
+			<< "3. Is repairing or not" << endl
+			<< "4. Back" << endl
+			<< "Your choice: ";
+		InputCorrectNumber(commandNumber);
+		switch (commandNumber)
 		{
-			CS.add = CS.temp;
-		}
-		else
+		case 1:
 		{
-			cout << "Error! Please enter correct data: ";
-		}
-		if (CS.add == 1) {
-			CS.activeWorkshopCount += 1;
-			if (CS.workshopCount < CS.activeWorkshopCount)
+			int id;
+			cout << "Select ID pipe: ";
+			InputCorrectNumber(id);
+			while (pipes.find(id) == pipes.end())
 			{
-				cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl;
+				cout << "Error!\nThe number exceeds the number of elements." << endl
+					<< "Number of elements: " << pipes.size() << endl
+					<< "Please enter correct data: ";
+				InputCorrectNumber(id);
+			}
+			int commandNumber1;
+			cout << "Do you want to remove the pipe?" << endl
+				<< "1. Yes" << endl
+				<< "2. No" << endl
+				<< "Your choice: ";
+			InputCorrectNumber(commandNumber1);
+			switch (commandNumber1)
+			{
+			case 1:
+			{
+				pipes.erase(id);
+				cout << "You removed the pipe from the ID: " << id << endl << endl;
+			}
+			case 2:
+				return;
+			default:
+				cout << "Error! Please enter correct data" << endl;
+				break;
 			}
 		}
-		else if (CS.add == 2) {
-			CS.activeWorkshopCount -= 1;
-			if (0 > CS.activeWorkshopCount)
-			{
-				cout << "Error! The number of active workshops cant be more than the total number of workshops" << endl;
+		break;
+		case 2:
+		{
+			string name;
+			cout << "Name: ";
+			cin.ignore();
+			getline(cin, name);
+			vector<Pipe*> editPipes;
+			for (auto& pair : pipes) {
+				if (pair.second.GetName().find(name) != string::npos)
+				{
+					cout << pair.second << endl;
+					editPipes.push_back(&(pair.second));
+				}
 			}
+			if (editPipes.empty())
+				cout << "Pipe with this name not found." << endl;
+			else
+				EditPipes(editPipes);
+		}
+		break;
+		case 3:
+		{
+			bool isRepairing;
+			cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
+			InputCorrectNumber(isRepairing, true);
+
+			vector<Pipe*> editPipes;
+			for (auto& pair : pipes) {
+				if (pair.second.GetStatus() == isRepairing)
+				{
+					cout << pair.second << endl;
+					editPipes.push_back(&(pair.second));
+				}
+			}
+			if (editPipes.empty())
+				cout << "Pipe with this name not found." << endl;
+			else
+				EditPipes(editPipes);
+		}
+		break;
+		case 4:
+			return;
+		default:
+			cout << "Error! Please enter correct data" << endl;
+			break;
 		}
 	}
 }
-void ViewAllObject(Pipe& pipe, CompressorStation& CS) {
-	system("cls");
-	if (!(pipe.isRepairing == 1 || pipe.isRepairing == 2))
-		cout << "Pipe not found." << endl;
-	else {
-		cout << "Kilometer mark: " << pipe.kilometerMark << endl;
-		cout << "Pipe length: " << pipe.length << endl;
-		cout << "Pipe diameter: " << pipe.diameter << endl;
-		cout << "Is repair? (1 - Yes, 2 - No) " << pipe.isRepairing << endl;
-	}
-	if (CS.workshopCount == 0)
-		cout << "Compressor station not found." << endl;
-	else {
-		cout << "Name Compressor Station: " << CS.name << endl;
-		cout << "Workshop Compressor Station: " << CS.workshopCount << endl;
-		cout << "Active Workshop Compressor Station: " << CS.activeWorkshopCount << endl;
-		cout << "Efficiency: " << CS.efficiency << endl;
-	}
-}
-void Save(Pipe& pipe, CompressorStation& CS) {
 
+void SearchCompressorStations(unordered_map <int, CompressorStation>& compressorStations) {
+	while (true)
 	{
-		ofstream out;   
-		out.open("pervi.txt");      
-		if (out.is_open())
-		{	if (pipe.diameter == 0)
-				cout << "Pipe not found." << endl;
-			else {
-				out << "Kilometer mark:" << endl;
-				out << string(pipe.kilometerMark) << endl;
-				out << "Pipe lengh" << endl;
-				out << pipe.length << endl;
-				out << "Pipe diametr" << endl;
-				out << pipe.diameter << endl;
-				out << "is repair?" << endl;
-				out << pipe.isRepairing << endl;
+		int commandNumber;
+		cout << "By what criteria do you want to find a Compressor Station?" << endl
+			<< "1. Id" << endl
+			<< "2. Name" << endl
+			<< "3. Percent of active worskshops" << endl
+			<< "4. Back" << endl
+			<< "Your choice: ";
+		InputCorrectNumber(commandNumber);
+		switch (commandNumber)
+		{
+		case 1:
+		{
+			int id;
+			cout << "Select ID Compressor station: ";
+			InputCorrectNumber(id);
+			while (compressorStations.find(id) == compressorStations.end())
+			{
+				cout << "Error!\nThe number exceeds the number of elements." << endl
+					<< "Number of elements: " << compressorStations.size() << endl
+					<< "Please enter correct data: ";
+				InputCorrectNumber(id);
 			}
-			if (CS.activeWorkshopCount == 0)
-				cout << "CS not found." << endl;
-			else {
-				out << "Name Compressor Station:" << endl;
-				out << CS.name << endl;
-				out << "Workshop Compressor Station: " << endl;
-				out << CS.workshopCount << endl;
-				out << "Active Workshop Compressor Station:" << endl;
-				out << CS.activeWorkshopCount << endl;
-				out << "Efficiency:" << endl;
-				out << CS.efficiency << endl;
-				getline(cin, CS.name);
-				InputCorrectNumber(CS.workshopCount);
-				InputCorrectNumber(CS.activeWorkshopCount);
-				InputCorrectNumber(CS.efficiency);
-
+			int commandNumber1;
+			cout << "Do you want to remove the pipe?" << endl
+				<< "1. Yes" << endl
+				<< "2. No" << endl
+				<< "Your choice: ";
+			InputCorrectNumber(commandNumber1);
+			switch (commandNumber1)
+			{
+			case 1:
+			{
+				compressorStations.erase(id);
+				cout << "You removed the compressor station from the ID: " << id << endl << endl;
+			}
+			case 2:
+				return;
+			default:
+				cout << "Error! Please enter correct data" << endl;
+				break;
 			}
 		}
-		out.close();
-		cout << "File has been written" << std::endl;
+		break;
+		case 2:
+		{
+			string name;
+			cout << "Name: ";
+			cin.ignore();
+			getline(cin, name);
+			vector<CompressorStation*> editCompressorStations;
+			for (auto& pair : compressorStations) {
+				if (pair.second.GetName().find(name) != string::npos)
+				{
+					cout << pair.second << endl;
+					editCompressorStations.push_back(&(pair.second));
+				}
+			}
+			if (editCompressorStations.empty())
+				cout << "Compressor Station with this name not found." << endl;
+			else
+				EditCompressorStations(editCompressorStations);
+		}
+		break;
+		case 3:
+		{
+			int percent;
+			cout << "Enter the percent of active workshops (0-100) +-5%: ";
+			InputCorrectNumber(percent, true);
+
+			vector<CompressorStation*> editCompressorStations;
+			for (auto& pair : compressorStations) {
+				if (pair.second.GetPercentOfActiveWorkshops() > percent - 5 && pair.second.GetPercentOfActiveWorkshops() < percent + 5)
+				{
+					cout << pair.second << endl;
+					editCompressorStations.push_back(&(pair.second));
+				}
+			}
+			if (editCompressorStations.empty())
+				cout << "Compressor Station with this name not found." << endl;
+			else
+				EditCompressorStations(editCompressorStations);
+		}
+		break;
+		case 4:
+			return;
+		default:
+			cout << "Error! Please enter correct data" << endl;
+			break;
+		}
 	}
-
 }
-
-void Load(string filename, Pipe& pipe, CompressorStation& CS) {
-	ifstream infile;
-	infile.open(filename);
-	if (infile.is_open()) {
-		string name, nameC;
-		double lengthStr, diameterStr, repairStr, numShopsStr, workingShopsStr, efficiencyStr;
-		infile >> name;
-		infile >> lengthStr;
-		infile >> diameterStr;
-		infile >> repairStr;
-		pipe.kilometerMark = name;
-		pipe.length = lengthStr;
-		pipe.diameter = diameterStr;
-		pipe.isRepairing = repairStr;
-		infile >> nameC;
-		infile >> numShopsStr;
-		infile >> workingShopsStr;
-		infile >> efficiencyStr;
-		CS.name = nameC;
-		CS.workshopCount = numShopsStr;
-		CS.activeWorkshopCount = workingShopsStr;
-		CS.efficiency = efficiencyStr;
-	}
-	infile.close();
-	cout << "The data is downloaded from a file " << filename << endl;
-}
-
 
 int main()
 {
+	unordered_map <int, Pipe> pipes = {};
+	unordered_map <int, CompressorStation> compressorStations = {};
+	Logger logger;
+	logger.log("Start");
 
 	int commandNumber;
-	Pipe pipe;
-	CompressorStation CS;
 	while (true)
 	{
 		cout << "MENU:" << endl
-			<< "8. Exit the program" << endl
+			<< "0. Exit the program" << endl
 			<< "1. Add pipe" << endl
 			<< "2. Add compressor station" << endl
 			<< "3. View all objects" << endl
@@ -246,55 +234,194 @@ int main()
 			<< "5. Add active workshop" << endl
 			<< "6. Save" << endl
 			<< "7. Load" << endl
+			<< "8. Search" << endl
 			<< "What do you want to do: ";
 		InputCorrectNumber(commandNumber);
 		switch (commandNumber)
 		{
 		case 0:
 			cout << "[ Exit the program ]" << endl;
+			logger.log("Exit");
 			return 0;
+			break;
 		case 1:
 		{
 			cout << "[ Add pipe ]" << endl;
-			AddPipe(pipe);
+			logger.log("Add pipe start");
+			Pipe pipe;
+			cin >> pipe;
+			pipes.insert(make_pair(pipe.GetId(), pipe));
+			logger.log("Add pipe finish");
 			break;
 		}
 		case 2:
 		{
 			cout << "[ Add compressor station ]" << endl;
-			AddCompressorStation(CS);
+			logger.log("Add compressor station start");
+			CompressorStation CS;
+			cin >> CS;
+			compressorStations.insert(make_pair(CS.GetId(), CS));
+			logger.log("Add compressor station finish");
 			break;
 		}
 		case 3:
 
 			cout << "[ View all objects ]" << endl;
-			ViewAllObject(pipe, CS);
+			logger.log("Show all objects start");
+
+			if (pipes.size() == 0)
+				cout << "Pipe not found." << endl;
+			for (const auto& pair : pipes)
+				cout << pair.second;
+
+			if (compressorStations.size() == 0)
+				cout << "Compressor station not found." << endl;
+			for (const auto& pair : compressorStations)
+				cout << pair.second;
+			logger.log("Show all objects finish");
 			break;
 
 		case 4:
-
+		{
 			cout << "[ Edit pipe ]" << endl;
-			EditPipe(pipe);
+			logger.log("Edit pipe start");
+			if (pipes.size() == 0)
+				cout << "Pipe not found." << endl;
+			else {
+				Pipe pipe = SelectElement(pipes);
+				EditPipe(pipe);
+			}
+			logger.log("Edit pipe finish");
 			break;
-
+		}
 		case 5:
-
+		{
 			cout << "[ Add active Workshop ]" << endl;
-			EditCS(CS);
+			cout << "[ Edit compressor station ]" << endl;
+			logger.log("Edit compressor station start");
+			if (compressorStations.size() == 0)
+				cout << "Compressor station not found." << endl;
+			else {
+				CompressorStation compressorStation = SelectElement(compressorStations);
+				EditCompressorStation(compressorStation);
+			}
+			logger.log("Edit compressor station finish");
 			break;
-
+		}
 		case 6:
-
+		{
 			cout << "[ Save ]" << endl;
-			Save(pipe, CS);
+			logger.log("Save start");
+			ofstream fout;
+			string fileName;
+			cout << "Enter file name: ";
+			cin.ignore();
+			getline(cin, fileName);
+			fout.open(fileName);
+			if (!fout.is_open())
+			{
+				cout << "File opening error!" << endl;
+			}
+			else
+			{
+				fout << pipes.size() << endl;
+				for (const auto& pair : pipes)
+					fout << pair.second;
+				fout << compressorStations.size() << endl;
+				for (const auto& pair : compressorStations)
+					fout << pair.second;
+			}
+			fout.close();
+			logger.log("Save finish");
+		}
 			break;
 
 		case 7:
-
+		{
 			cout << "[ Load ]" << endl;
-			Load ("vtoroi.txt", pipe, CS);
-			break;
+			logger.log("Load start");
+			ifstream fin;
+			string fileName;
+			int input;
+			cout << "Enter file name: ";
+			cin.ignore();
+			getline(cin, fileName);
+			fin.open(fileName);
+			if (!fin.is_open())
+			{
+				cout << "File opening error!" << endl;
+			}
+			else
+			{
+				int pipeSize;
+				fin >> pipeSize;
+				if (pipeSize == 0)
+					cout << "Pipes not found." << endl;
+				while (pipeSize-- > 0)
+				{
+					Pipe pipe;
+					fin >> pipe;
+					pipes.insert(make_pair(pipe.GetId(), pipe));
+				}
 
+				int compressorStationSize;
+				fin >> compressorStationSize;
+				if (compressorStationSize == 0)
+					cout << "Compressor stations not found." << endl;
+				while (compressorStationSize-- > 0)
+				{
+					CompressorStation CS;
+					fin >> CS;
+					compressorStations.insert(make_pair(CS.GetId(), CS));
+				}
+
+				fin.close();
+			}
+			logger.log("Load finish");
+		}
+			break;
+		case 8:
+		{
+			bool isRunning = true;
+			while (isRunning) {
+				int commandNumber1;
+				cout << "[ Search ]" << endl
+					<< "What do you want to find?" << endl
+					<< "1. Pipe" << endl
+					<< "2. Compressor station" << endl
+					<< "3. Back" << endl
+					<< "Your choice: ";
+				logger.log("Search start");
+				InputCorrectNumber(commandNumber1);
+				switch (commandNumber1)
+				{
+				case 1:
+					if (pipes.size() == 0)
+						cout << "Pipes not found." << endl;
+					else {
+						cout << "[ Pipe ]" << endl;
+						SearchPipes(pipes);
+					}
+					break;
+				case 2:
+					if (compressorStations.size() == 0)
+						cout << "Compressor stations not found." << endl;
+					else {
+						cout << "[ Compressor station ]" << endl;
+						SearchCompressorStations(compressorStations);
+					}
+					break;
+				case 3:
+					isRunning = false;
+					break;
+				default:
+					cout << "Error! Please enter correct data" << endl;
+					break;
+				}
+				logger.log("Search finish");
+			}
+			break;
+		}
 		default:
 			cout << "Error! Please enter correct data: " << endl;
 			break;
