@@ -26,5 +26,6 @@ public:
 	friend istream& operator >> (istream& in, CompressorStation& CS);
 	friend ofstream& operator << (ofstream& fout, const CompressorStation& CS);
 	friend ifstream& operator >> (ifstream& fin, CompressorStation& CS);
+
 };
 

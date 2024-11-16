@@ -16,11 +16,16 @@ class Pipe
 	int diameter = 0;
 	bool isRepairing;
 public:
+	int csId1 = 0;
+	int csId2 = 0;
 	int GetId();
 	string GetName() const;
 	int GetDiameter() const;
 	bool GetStatus() const;
+	bool FreeConnections() const;
 	void PrintPipeStatus();
+	void Connect(const int& id1, const int& id2);
+	void DeleteConnection();
 	friend void EditPipes(vector <Pipe*>& pipes);
 	friend void EditPipe(Pipe& pipe);
 	friend ostream& operator << (ostream& out, const Pipe& pipe);

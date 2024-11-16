@@ -1,2 +1,28 @@
 [0] Start
 [1] Add pipe start
+[2] Add pipe finish
+[3] Add pipe start
+[4] Add pipe finish
+[5] Add pipe start
+[6] Add pipe finish
+[7] Add compressor station start
+[8] Add compressor station finish
+[9] Add compressor station start
+[10] Add compressor station finish
+[11] Add compressor station start
+[12] Add compressor station finish
+[13] Show all objects start
+[14] Show all objects finish
+[15] Edit pipe start
+[16] Edit pipe finish
+[17] Edit compressor station start
+[18] Edit compressor station finish
+[19] Connect the pipe and compressor stations start
+[20] Connect the pipe and compressor stations finish
+[21] View gas Network start
+[22] View gas Network finish
+[23] Delete gas Network start
+[24] Connect the pipe and compressor stations start
+[25] Connect the pipe and compressor stations finish
+[26] View gas Network start
+[27] View gas Network finish

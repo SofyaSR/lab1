@@ -359,10 +359,14 @@ int main()
 			<< "2. Add compressor station" << endl
 			<< "3. View all objects" << endl
 			<< "4. Edit pipe" << endl
-			<< "5. Add active workshop" << endl
+			<< "5. Edit compressor station" << endl
 			<< "6. Save" << endl
 			<< "7. Load" << endl
 			<< "8. Search" << endl
+			<< "9. Connect the pipe and compressor stations" << endl
+			<< "10. View gas network" << endl
+			<< "11. Delete gas network" << endl
+			<< "12. Topological sort" << endl
 			<< "What do you want to do: ";
 		InputCorrectNumberNull(commandNumber);
 		switch (commandNumber)
@@ -548,8 +552,77 @@ int main()
 				}
 				logger.log("Search finish");
 			}
-			break;
 		}
+			break;
+		case 9:
+		{
+			logger.log("Connect the pipe and compressor stations start");
+			if (compressorStations.size() < 2)
+				cout << "Compressor stations less than two." << endl;
+			else
+				ConnectPipe(pipes, compressorStations);
+			logger.log("Connect the pipe and compressor stations finish");
+		}
+		break;
+		case 10:
+		{
+			cout << "[ View gas Network ]" << endl;
+			logger.log("View gas Network start");
+			if (pipes.size() == 0)
+				cout << "Pipe not found." << endl;
+			if (compressorStations.size() == 0)
+				cout << "Compressor station not found." << endl;
+			int connectionCount = 0;
+			for (const auto& pair : pipes)
+				if (!pair.second.FreeConnections())
+				{
+					cout << "CS1 " << pair.second.csId1 << "- Pipe " << pair.first << " - CS2 " << pair.second.csId2 << endl;
+					connectionCount++;
+				}
+			cout << "Found " << connectionCount << " connections." << endl;
+			logger.log("View gas Network finish");
+		}
+		break;
+		case 11:
+		{
+
+			cout << "[ Delete gas Network ]" << endl;
+			logger.log("Delete gas Network start");
+			if (pipes.size() == 0)
+				cout << "Pipe not found." << endl;
+			else {
+				cout << "Enter the ID of the pipe you want to delete: ";
+				int deleteGasNetwork;
+				InputCorrectNumber(deleteGasNetwork);
+				while (pipes.find(deleteGasNetwork) == pipes.end())
+				{
+					cout << "Error!\nPipe with this Id not found." << endl
+						<< "Please enter correct data: ";
+					InputCorrectNumber(deleteGasNetwork);
+				}
+				if (pipes[deleteGasNetwork].FreeConnections()) {
+					cout << "Pipe not connected." << endl;
+				}
+				else {
+					pipes[deleteGasNetwork].DeleteConnection();
+					cout << "Connection deleted." << endl;
+				}
+			}
+		}
+		break;
+		case 12:
+		{
+			cout << "[ Topological Sort ]" << endl;
+			// Вызов функции topologicalSort
+			vector<int> sortedStations = topologicalSort(pipes, compressorStations);
+
+			// Вывод отсортированных станций
+			for (int stationId : sortedStations) {
+				cout << stationId << " ";
+			}
+			cout << endl;
+		}
+		break;
 		default:
 			cout << "Error! Please enter correct data: " << endl;
 			break;
