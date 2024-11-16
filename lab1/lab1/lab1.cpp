@@ -215,6 +215,134 @@ void SearchCompressorStations(unordered_map <int, CompressorStation>& compressor
 	}
 }
 
+bool HasPipeWithConnection(const unordered_map<int, Pipe>& pipes, const int& csId1, const int& csId2) {
+	bool hasPipe = false;
+	for (auto& pair : pipes) {
+		if ((pair.second.csId1 == csId1 && pair.second.csId2 == csId2)
+			|| (pair.second.csId1 == csId2 && pair.second.csId2 == csId1))
+		{
+			hasPipe = true;
+		}
+	}
+	return hasPipe;
+}
+
+void ConnectPipe(unordered_map <int, Pipe>& pipes, unordered_map <int, CompressorStation>& compressorStations)
+{
+	cout << endl << "[ Connect the pipe and compressor stations ]" << endl;
+	int diameterPipe;
+	cout << "Enter pipe diameter: ";
+	InputCorrectNumber(diameterPipe);
+
+	int connectedPipeId = 0;
+	for (auto& pair : pipes) {
+		if (pair.second.GetDiameter() == diameterPipe && pair.second.FreeConnections())
+		{
+			connectedPipeId = pair.first;
+			break;
+		}
+	}
+
+	Pipe* connectedPipe{};
+	if (connectedPipeId == 0) // если не найдено свободных труб с нужным диаметром
+	{
+		bool isRunning = true;
+		while (isRunning) {
+			int commandNumber1;
+			cout << "Pipe with this diameter not found." << endl
+				<< "Do you want to add a pipe?" << endl
+				<< "1. Yes" << endl
+				<< "2. No" << endl
+				<< "Your choice: ";
+			InputCorrectNumber(commandNumber1);
+			switch (commandNumber1)
+			{
+			case 1:
+			{
+				Pipe pipe;
+				cin >> pipe;
+				connectedPipe = &pipe;
+				pipes.insert(make_pair(connectedPipe->GetId(), *connectedPipe));
+				isRunning = false;
+			}
+			break;
+			case 2:
+				return;
+			default:
+				cout << "Error! Please enter correct data" << endl;
+				break;
+			}
+		}
+	}
+	else
+	{
+		connectedPipe = &pipes[connectedPipeId];
+	}
+
+	// запрашиваем две кс
+	// соединяем трубу с двумя кс
+	cout << "Enter the id of the first compressor station: ";
+	int csId1;
+	InputCorrectNumber(csId1);
+	while (compressorStations.find(csId1) == compressorStations.end())
+	{
+		cout << "Error!\nCompressor Station with this Id not found." << endl
+			<< "Please enter correct data: ";
+		InputCorrectNumber(csId1);
+	}
+	cout << "Enter the id of the second compressor station: ";
+	int csId2;
+	InputCorrectNumber(csId2);
+	while (compressorStations.find(csId2) == compressorStations.end()
+		|| csId2 == csId1
+		|| HasPipeWithConnection(pipes, csId1, csId2))
+	{
+		cout << "Error!\nCompressor Station with this Id not found." << endl
+			<< "Please enter correct data: ";
+		InputCorrectNumber(csId2);
+	}
+	connectedPipe->Connect(csId1, csId2);
+}
+
+vector<int> topologicalSort(unordered_map<int, Pipe>& pipes, unordered_map<int, CompressorStation>& stations) {
+	vector<int> result;
+	unordered_map<int, int> inDegree; // Количество входящих ребер для каждой вершины
+
+	// Инициализация inDegree для каждой вершины
+	for (auto& pipe : pipes) {
+		inDegree[pipe.second.csId2]++;
+	}
+
+	// Создаем очередь для хранения вершин с нулевым inDegree
+	queue<int> q;
+	for (auto& station : stations) {
+		if (inDegree.find(station.first) == inDegree.end()) {
+			q.push(station.first);
+		}
+	}
+
+	// Выполняем топологическую сортировку
+	while (!q.empty()) {
+		int currentStation = q.front();
+		q.pop();
+		result.push_back(currentStation);
+
+		// Уменьшаем inDegree для всех соседних вершин
+		for (auto& pipe : pipes) {
+			if (pipe.second.csId1 == currentStation) {
+				inDegree[pipe.second.csId2]--;
+				if (inDegree[pipe.second.csId2] == 0) {
+					q.push(pipe.second.csId2);
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+
+
 int main()
 {
 	unordered_map <int, Pipe> pipes = {};

@@ -112,12 +112,12 @@ istream& operator>>(istream& in, CompressorStation& CS)
 			<< "Please enter correct data: ";
 		InputCorrectNumber(CS.activeWorkshopCount, true);
 	}
-	cout << "Enter efficiency from A to G: ";
-	cin >> CS.efficiency;
-	while (!(CS.efficiency >= "A" && CS.efficiency <= "G" && CS.efficiency.length() == 1))
+	cout << "Enter efficiency from 1 to 100: ";
+	InputCorrectNumber(CS.efficiency, true);
+	while (!(CS.efficiency >= 1 && CS.efficiency <= 100))
 	{
 		cout << "Error! Please enter correct data: ";
-		cin >> CS.efficiency;
+		InputCorrectNumber(CS.efficiency, true);
 	}
 	return in;
 }

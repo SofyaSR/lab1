@@ -27,14 +27,31 @@ bool Pipe::GetStatus() const
 	return isRepairing;
 }
 
+bool Pipe::FreeConnections() const
+{
+	return csId1 < 1 || csId2 < 1;
+}
+
+void Pipe::Connect(const int& id1, const int& id2)
+{
+	csId1 = id1;
+	csId2 = id2;
+}
+
+void Pipe::DeleteConnection()
+{
+	csId1 = 0;
+	csId2 = 0;
+}
+
 void InputCorrectDiameter(int& diameter)
 {
 	cin >> diameter;
-	while ((diameter < 500) || cin.fail() || cin.peek() != '\n')
+	while ((diameter != 500 && diameter != 700 && diameter != 1000 && diameter != 1400)  || cin.fail() || cin.peek() != '\n')
 	{
 		cin.clear();
 		cin.ignore(1000, '\n');
-		cout << "Error! Please enter correct data: ";
+		cout << "Error! Please enter correct data (500, 700, 1000, 1400): ";
 		cin >> diameter;
 	}
 }
@@ -101,7 +118,7 @@ ostream& operator<<(ostream& out, const Pipe& pipe)
 	out << endl << "Pipe Id: " << pipe.Id << endl;
 	out << "Kilometer mark: " << pipe.kilometerMark << endl;
 	out << "Pipe length: " << pipe.length << " km" << endl;
-	out << "Pipe diameter: " << pipe.diameter << " mm" << endl;
+	out << "Pipe diameter (500, 700, 1000, 1400): " << pipe.diameter << " mm" << endl;
 	if (pipe.isRepairing)
 		out << "Pipe under repair." << endl;
 	else
@@ -118,7 +135,7 @@ istream& operator>>(istream& in, Pipe& pipe)
 	getline(in, pipe.kilometerMark);
 	cout << "Enter the pipe length (in kilometers): ";
 	InputCorrectNumber(pipe.length);
-	cout << "Enter the pipe diameter (in millimeters): ";
+	cout << "Enter the pipe diameter (500, 700, 1000, 1400) (in millimeters): ";
 	InputCorrectDiameter(pipe.diameter);
 	cout << "Is the pipe being repaired? (1 - Yes, 0 - No) ";
 	InputCorrectNumberNull(pipe.isRepairing, true);

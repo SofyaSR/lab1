@@ -14,7 +14,7 @@ class CompressorStation
 	string name = "";
 	int workshopCount = 0;
 	int activeWorkshopCount = 0;
-	string efficiency = "A";
+	int efficiency = 0;
 public:
 	int GetId();
 	string GetName() const;
